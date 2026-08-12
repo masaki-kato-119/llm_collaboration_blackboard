@@ -1,5 +1,7 @@
 # LLM Collaboration Blackboard
 
+[llm_collaboration_blackboard_spec_final_v1.0_ja.md](llm_collaboration_blackboard_spec_final_v1.0_ja.md) v1 の実装。
+
 LLM Collaboration Blackboard は、複数の LLM と人間が同じ作業対象を共有するための、Markdown を主資料とした協調基盤です。Plan、タスク、イベント、メモリ、状態を一つの Blackboard に集約し、MCP サーバーやローカルダッシュボードから操作できます。
 
 このプロジェクトの狙いは、チャットログのように散らばった情報ではなく、検証可能な Plan とイベントとして作業の流れを残すことです。これにより、誰が何を担当し、どのタスクが進行中で、どの変更が行われたかを追跡しやすくなります。
