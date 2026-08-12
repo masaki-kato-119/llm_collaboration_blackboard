@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "blackboard": {
+      "command": "<ABSOLUTE_PATH_TO_THIS_REPO>/.venv/Scripts/python.exe",
+      "args": ["-m", "blackboard.server"],
+      "env": {
+        "BLACKBOARD_ROOT": "<ABSOLUTE_PATH_TO_THIS_REPO>/demo_blackboard"
+      }
+    }
+  }
+}

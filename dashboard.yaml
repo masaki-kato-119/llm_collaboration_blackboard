@@ -1,0 +1,6 @@
+# dashboard.yaml
+projects:
+  - id: collaboration-core
+    name: LLM Collaboration Blackboard
+    root: E:\llm_collaboration_blackboard\blackboard
+refresh_seconds: 5

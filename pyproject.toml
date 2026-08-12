@@ -1,0 +1,54 @@
+[project]
+name = "llm-collaboration-blackboard"
+version = "0.1.0"
+description = "Markdown Blackboard MCP server for role-based LLM collaboration"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "fastapi>=0.115,<1.0",
+  "mcp>=1.20.0,<2.0.0",
+  "PyYAML>=6.0",
+  "uvicorn>=0.30,<1.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-cov>=5.0", "ruff>=0.6", "pre-commit>=3.7"]
+
+[project.scripts]
+blackboard-server = "blackboard.server:main"
+blackboard-dashboard = "blackboard.dashboard_server:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 140
+target-version = "py310"
+src = ["src", "tests", "scripts"]
+# markdown-hierarchical-memory/ is a separate, reference-only project kept
+# in this repo (see doc/IMPLEMENTATION_PLAN_ja.md); it is not this
+# package's code and is intentionally out of lint scope.
+extend-exclude = ["markdown-hierarchical-memory"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.coverage.run]
+source = ["src/blackboard"]
+# server.py's MCP tool bodies mostly run inside subprocesses spawned by the
+# stdio_client tests, which this simple config does not instrument. Coverage
+# here undercounts server.py; treat its number as a floor, not the true figure.
+# Run as `pytest --cov=src/blackboard --cov-report=term-missing` — the
+# module-name form (`--cov=blackboard`) does not resolve under this
+# editable-install layout.
+
+[tool.coverage.report]
+skip_empty = true
