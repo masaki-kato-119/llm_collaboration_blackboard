@@ -1,70 +1,70 @@
 # LLM Collaboration Blackboard
 
-[llm_collaboration_blackboard_spec_final_v1.0_ja.md](llm_collaboration_blackboard_spec_final_v1.0_ja.md) v1 の実装。
+An implementation of version 1 of the [LLM Collaboration Blackboard Specification](llm_collaboration_blackboard_spec_final_v1.0_en.md).
 
-LLM Collaboration Blackboard は、複数の LLM と人間が同じ作業対象を共有するための、Markdown を主資料とした協調基盤です。Plan、タスク、イベント、メモリ、状態を一つの Blackboard に集約し、MCP サーバーやローカルダッシュボードから操作できます。
+LLM Collaboration Blackboard is a collaboration platform centered on Markdown that allows multiple LLMs and humans to share the same work context. Plans, tasks, events, memory, and state are collected in a single Blackboard and can be operated through an MCP server or a local dashboard.
 
-このプロジェクトの狙いは、チャットログのように散らばった情報ではなく、検証可能な Plan とイベントとして作業の流れを残すことです。これにより、誰が何を担当し、どのタスクが進行中で、どの変更が行われたかを追跡しやすくなります。
+The goal of this project is to preserve work as verifiable Plans and Events rather than as scattered chat logs. This makes it easier to track who is responsible for what, which tasks are in progress, and what changes have been made.
 
-![LLM Collaboration Blackboard の概念図](llm-collaboration-blackboard-overview.png)
+![LLM Collaboration Blackboard overview](llm-collaboration-blackboard-overview.png)
 
-## 何ができるか
+## What It Provides
 
-- Markdown と YAML Front Matter を中心にした Plan 管理
-- タスクの claim / update / cancel / recover を通じた状態遷移管理
-- 変更ごとの監査イベントの記録と再送
-- Role に応じた操作制限（Role は自己申告ベース）
-- ローカルダッシュボードによる Plan と進捗の可視化
+- Plan management centered on Markdown and YAML Front Matter
+- Task state transitions through claim / update / cancel / recover
+- Recording and replay of audit events for each change
+- Role-based operation restrictions (Roles are self-declared)
+- Visualization of Plans and progress through a local dashboard
 
-## 典型的な使い方
+## Typical Workflow
 
-1. まず Plan を作成し、タスクを追加します。
-2. Researcher / Implementer / Reviewer の役割を割り当てます。
-3. 必要なタスクを claim して作業を開始します。
-4. 状態を update し、必要に応じて blocked / recover で再開・停止を切り替えます。
-5. Event と Plan を通じて、作業履歴や判断の背景を追えるようにします。
+1. Create a Plan and add tasks.
+2. Assign roles such as Researcher, Implementer, and Reviewer.
+3. Claim the tasks that are needed and begin work.
+4. Update task state, and use blocked / recover to pause or resume work as needed.
+5. Use Events and the Plan to preserve the work history and the background behind decisions.
 
-このような流れは、複数の LLM を並行して動かす実験、共同開発、レビュー付きの実装フローに向いています。
+This workflow is suitable for experiments running multiple LLMs in parallel, collaborative development, and implementation flows with review.
 
-## クイックスタート
+## Quick Start
 
-### 1. 前提条件
+### 1. Prerequisites
 
-- Python 3.10 以上（3.13 推奨）
-- Windows / macOS / Linux で利用可能
+- Python 3.10 or later (3.13 recommended)
+- Available on Windows, macOS, and Linux
 
-### 2. インストール
+### 2. Installation
 
 ```powershell
 py -3.13 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -e .[dev]
+.\\.venv\\Scripts\\python.exe -m pip install -e .[dev]
 ```
 
-### 3. Blackboard ルートを用意する
+### 3. Prepare a Blackboard Root
 
 ```powershell
-$env:BLACKBOARD_ROOT = "C:\path\to\blackboard"
+$env:BLACKBOARD_ROOT = "C:\\path\\to\\blackboard"
 ```
 
-### 4. サーバーを起動する
+### 4. Start the Server
 
 ```powershell
-.\.venv\Scripts\blackboard-server
+.\\.venv\\Scripts\\blackboard-server
 ```
 
-### 5. ダッシュボードを起動する（任意）
+### 5. Start the Dashboard (Optional)
 
 ```powershell
-.\.venv\Scripts\blackboard-dashboard --config .\dashboard.yaml
+.\\.venv\\Scripts\\blackboard-dashboard --config .\\dashboard.yaml
 ```
 
-ブラウザで http://127.0.0.1:8765/ を開くと、Plan とタスクの状態を確認できます。
+Open http://127.0.0.1:8765/ in a browser to view Plan and task status.
 
-![Blackboard の利用イメージ](blackboard-workflow.png)
+![Blackboard workflow](blackboard-workflow.png)
 
-## MCP で使う
+## Using MCP
 
-このリポジトリでは、MCP 経由で Blackboard を操作できます。まずリポジトリルートの [.mcp.json.example](.mcp.json.example) を .mcp.json にコピーし、絶対パスに置き換えてください。
+This repository supports operating the Blackboard through MCP. Copy [.mcp.json.example](.mcp.json.example) in the repository root to `.mcp.json`, then replace the paths with absolute paths.
 
 ```json
 {
@@ -80,32 +80,32 @@ $env:BLACKBOARD_ROOT = "C:\path\to\blackboard"
 }
 ```
 
-代表的なツールには次のようなものがあります。
+Representative tools include:
 
-- read_plan: Plan の内容と実行可能タスクを取得
-- claim_task: タスクを claim して作業を開始
-- update_task: タスク状態を done / blocked / cancelled に更新
-- add_task / edit_task / cancel_task: Plan を更新
-- recover_task: blocked タスクを pending に戻す
-- read_memory / write_memory: メモリ文書を扱う
-- read_state / write_state: 状態文書を扱う
+- `read_plan`: retrieve Plan contents and executable tasks
+- `claim_task`: claim a task and begin work
+- `update_task`: update task status to done / blocked / cancelled
+- `add_task` / `edit_task` / `cancel_task`: update the Plan
+- `recover_task`: return a blocked task to pending
+- `read_memory` / `write_memory`: work with memory documents
+- `read_state` / `write_state`: work with state documents
 
-## プロジェクト構成
+## Project Structure
 
-- [src/blackboard](src/blackboard): サーバー実装、モデル、権限制御、ダッシュボード実装
-- [scripts](scripts): デモや補助スクリプト
-- [blackboard](blackboard): 例示・実行時に使う Blackboard データ
-- [dashboard.yaml](dashboard.yaml): ローカルダッシュボード設定サンプル
+- [src/blackboard](src/blackboard): server implementation, models, permission controls, and dashboard implementation
+- [scripts](scripts): demos and utility scripts
+- `blackboard`: Blackboard data used for examples and runtime
+- [dashboard.yaml](dashboard.yaml): sample local dashboard configuration
 
-## 開発
+## Development
 
-開発ルールやコミット方針は [CONTRIBUTING.md](CONTRIBUTING.md) を参照してください。
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development rules and commit conventions.
 
 ```powershell
-.\.venv\Scripts\python.exe -m pytest
-.\.venv\Scripts\python.exe -m ruff check src tests scripts
+.\\.venv\\Scripts\\python.exe -m pytest
+.\\.venv\\Scripts\\python.exe -m ruff check src tests scripts
 ```
 
-## ライセンス
+## License
 
-このプロジェクトは MIT License のもとで公開されています。詳細は [LICENSE](LICENSE) を参照してください。
+This project is released under the MIT License. See [LICENSE](LICENSE) for details.
